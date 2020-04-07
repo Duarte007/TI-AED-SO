@@ -4,6 +4,13 @@ import java.util.Scanner;
 
 public class App {
     public static void main (String [] args) {
+
+         Thread t1 =  new Thread(); //Criação da primeira thread
+         Thread t2 = new Thread(); //Criação da segunda thread 
+
+         t1.start();//Rodando a thread 1
+         t2.start();//Rodando a thread 2
+
         Scanner sc = new Scanner (System.in);
         int opcao = 0;
 
@@ -19,12 +26,15 @@ public class App {
 
             switch (opcao) {
                 case 1:
-                    //todo
+                    
                 break;
                     
                 case 2: 
-                    //todo
-                break;
+                System.out.println("1 - Suspender processo.");
+                System.out.println("2 - Retomar processo.\n");
+                System.out.print("Escolha sua opção: ");
+                String lerNumCase2 = sc.nextLine();
+                int opcaoCase2 = Integer.parseInt(lerNumCase2);
 
                 case 3:
                     //todo
@@ -33,9 +43,11 @@ public class App {
                 case 4: 
                     System.out.println("Finalizando..."); 
                 break;
+
                 default:
                     System.out.println("Opção inválida."); 
                 break;
+
             }
 
         }        
