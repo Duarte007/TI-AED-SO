@@ -1,8 +1,44 @@
 package app;
 
+import java.util.Random;
 import java.util.Scanner;
 
 public class App {
+
+    public static int aleatoriar(int minimo, int maximo){
+        Random random = new Random();
+        return random.nextInt((maximo - minimo) + 1) + minimo;
+        //metodo para gerar número aleatorio
+    }
+
+    public static void executaProcesso(Fila fila){
+
+        while(fila != null){
+
+            int numAleatorio = aleatoriar(0, 250000);
+             try 
+            { 
+              Thread.sleep(numAleatorio); 
+              fila.retirar();
+            }                    
+            catch (InterruptedException ex) {
+                System.out.println ("Thread acordada!");
+            }
+        }
+    }
+
+    public static void executaThreads(Fila fila){
+        executaThread1(fila);
+        executaThread2(fila);
+    }
+
+    public static void executaThread1(Fila fila){
+        executaProcesso(fila);
+    }
+
+    public static void executaThread2(Fila fila){
+        executaProcesso(fila);
+    }
     public static void main (String [] args) {
 
          Thread t1 =  new Thread(); //Criação da primeira thread
@@ -10,6 +46,8 @@ public class App {
 
          t1.start();//Rodando a thread 1
          t2.start();//Rodando a thread 2
+
+         System.out.println(aleatoriar(0, 250000)); //pega um número aleatorio no intervalo de 0 a 250 segundos 
 
         Scanner sc = new Scanner (System.in);
         int opcao = 0;
@@ -35,6 +73,10 @@ public class App {
                 System.out.print("Escolha sua opção: ");
                 String lerNumCase2 = sc.nextLine();
                 int opcaoCase2 = Integer.parseInt(lerNumCase2);
+
+                if(opcaoCase2 == 1){
+                   //executaThreads(passar_fila);
+                }
 
                 case 3:
                     //todo
