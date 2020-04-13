@@ -5,9 +5,13 @@ import java.io.IOException;
 import java.io.BufferedReader;
 import java.io.FileNotFoundException;;
 
-public class Reader {
+public final class Reader {
 
-    public String LerArquivo(String caminho) {
+    private Reader(){
+        
+    }
+
+    public static String lerArquivo(String caminho) {
 
         String conteudo = "";
 
