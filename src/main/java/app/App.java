@@ -7,11 +7,10 @@ import java.io.IOException;
 import java.io.BufferedReader;
 import java.io.FileNotFoundException;
 
-import app.util.Reader;
-
 public class App {
 
     public static Fila[] filasPrioridades = new Fila[20];
+    public static Escalonador escalonador = new Escalonador(filasPrioridades);
 
     public static void addQueue(Processo processo) {
         if (filasPrioridades[processo.getPriority() - 1] != null)
@@ -22,7 +21,7 @@ public class App {
 
     public static void createProcess() {
         String currentDirectory = System.getProperty("user.dir");
-        // String data = Reader.lerArquivo(currentDirectory+"\\app\\processos.txt");
+
         try {
             FileReader file = new FileReader(currentDirectory + "\\app\\processos.txt");
 
@@ -50,25 +49,25 @@ public class App {
 
     }
 
-    public static int aleatoriar(int minimo, int maximo) {
-        Random random = new Random();
-        return random.nextInt((maximo - minimo) + 1) + minimo;
-        // metodo para gerar número aleatorio
-    }
-
-    public static void executaProcesso(Fila fila) {
-
-        while (fila != null) {
-
-            int numAleatorio = aleatoriar(0, 250000);
-            try {
-                Thread.sleep(numAleatorio);
-                fila.retirar();
-            } catch (InterruptedException ex) {
-                System.out.println("Thread acordada!");
-            }
+    public static void choiceQueueToExecute(){
+        for (Fila fila : filasPrioridades) {
+            executaThreads(fila);
         }
     }
+
+    // public static void executaProcesso(Fila fila) {
+
+    //     while (fila.primeiro.proximo != null) {
+
+    //         int numAleatorio = aleatoriar(0, 250000);
+    //         try {
+    //             Thread.sleep(numAleatorio);
+    //             fila.retirar();
+    //         } catch (InterruptedException ex) {
+    //             System.out.println("Thread acordada!");
+    //         }
+    //     }
+    // }
 
     public static void executaThreads(Fila fila) {
         executaThread1(fila);
@@ -76,11 +75,17 @@ public class App {
     }
 
     public static void executaThread1(Fila fila) {
-        executaProcesso(fila);
+        escalonador.executaProcesso(fila);
     }
 
     public static void executaThread2(Fila fila) {
-        executaProcesso(fila);
+        escalonador.executaProcesso(fila);
+    }
+
+    public static int aleatoriar(int minimo, int maximo) {
+        Random random = new Random();
+        return random.nextInt((maximo - minimo) + 1) + minimo;
+        // metodo para gerar número aleatorio
     }
 
     public static void main(String[] args) {
