@@ -1,5 +1,6 @@
 package app;
 
+import java.util.ArrayList;
 import java.util.Random;
 import java.util.Scanner;
 import java.io.FileReader;
@@ -11,6 +12,7 @@ public class App {
 
     public static Fila[] filasPrioridades = new Fila[20];
     public static Escalonador escalonador = new Escalonador(filasPrioridades);
+    public static ArrayList<Processo> process;
 
     public static void addQueue(Processo processo) {
         if (filasPrioridades[processo.getPriority() - 1] != null)
@@ -37,8 +39,11 @@ public class App {
                     row = readerFile.readLine();
                     if(row != null){
                         data = row.split(";");
-                        addQueue(new Processo(Integer.parseInt(data[0]), data[1], Integer.parseInt(data[2]),
-                                Integer.parseInt(data[3])));
+                        Processo currentProcess = new Processo(
+                        Integer.parseInt(data[0]), data[1], Integer.parseInt(data[2]),
+                        Integer.parseInt(data[3]));
+                        process.add(currentProcess);
+                        addQueue(currentProcess);
                     }
                 }
                 file.close();
@@ -55,6 +60,19 @@ public class App {
         for (Fila fila : filasPrioridades) {
             executaThreads(fila);
         }
+    }
+
+    public static void changePriorities(Integer pid, Integer priority){
+        if(priority >= 1 && priority <= 20){
+
+            Processo filteredProcesso = process.stream()
+            .filter(processos -> process.getID() == pid)
+            .findAny()
+            .orElse(null);
+            escalonador.changePriority(filteredProcesso, priority);
+        }
+        
+
     }
 
     // public static void executaProcesso(Fila fila) {
@@ -114,7 +132,12 @@ public class App {
 
             switch (opcao) {
                 case 1:
-
+                    System.out.println("Informe o Id do processo (PID): ");
+                    Integer pid = sc.nextInt();
+                    System.out.println("Informe o novo número de prioridade (1 a 20): ");
+                    Integer priority = sc.nextInt();
+                    changePriorities(pid, priority);
+                    
                     break;
 
                 case 2:
@@ -125,11 +148,11 @@ public class App {
                     int opcaoCase2 = Integer.parseInt(lerNumCase2);
 
                     if (opcaoCase2 == 1) {
-                        // executaThreads(passar_fila);
+                        
                     }
 
                 case 3:
-                    // todo
+                    choiceQueueToExecute();
                     break;
 
                 case 4:
