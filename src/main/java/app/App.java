@@ -15,8 +15,10 @@ public class App {
     public static void addQueue(Processo processo) {
         if (filasPrioridades[processo.getPriority() - 1] != null)
             filasPrioridades[processo.getPriority() - 1].adicionar(processo);
-        else
+        else{
             filasPrioridades[processo.getPriority() - 1] = new Fila();
+            filasPrioridades[processo.getPriority() - 1].adicionar(processo);
+        }
     }
 
     public static void createProcess() {
@@ -102,7 +104,7 @@ public class App {
 
         while (opcao != 4) {
             System.out.println("========================================");
-            System.out.println("1 - Modificar prioridade de acesso.");
+            System.out.println("1 - Modificar prioridade do processo.");
             System.out.println("2 - Suspender ou retomar processo.");
             System.out.println("3 - Iniciar novo ciclo.");
             System.out.println("4 - Sair\n");
