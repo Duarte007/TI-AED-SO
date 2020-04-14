@@ -42,7 +42,7 @@ public class Processo implements IDados {
     }
 
     public int getExecutionTime(){
-        return LocalTime.now().minusNanos(this.time.getNano()).getNano();
+        return this.time.getNano();
     }
      
     @Override

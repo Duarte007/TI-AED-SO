@@ -13,8 +13,11 @@ public class Escalonador{
     }
 
     //@TODO rotina para alterar a prioridade do processo caso necessario
-    public void changePriority(Processo process, int priorityToSub){
-        this.processos[process.getPriority() - 1 + priorityToSub].adicionar(process);
+    public void changePriority(Processo process, int priorityToSub, Boolean add){
+        if(!add)
+            this.processos[process.getPriority() - 1 + priorityToSub].adicionar(process);
+        else
+            this.processos[priorityToSub - 1].adicionar(process);
     }
     
     //@TODO rotina para matar processo caso necessario
@@ -43,7 +46,7 @@ public class Escalonador{
                 } else {
                     IDados dado = fila.retirar();
                     if(dado != null){
-                        this.changePriority((Processo)dado, priorityToSub);
+                        this.changePriority((Processo)dado, priorityToSub, false);
                     }
                 }
             } catch (InterruptedException ex) {

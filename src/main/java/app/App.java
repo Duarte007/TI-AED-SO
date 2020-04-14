@@ -1,6 +1,6 @@
 package app;
 
-import java.util.ArrayList;
+import java.util.List;
 import java.util.Random;
 import java.util.Scanner;
 import java.io.FileReader;
@@ -12,7 +12,7 @@ public class App {
 
     public static Fila[] filasPrioridades = new Fila[20];
     public static Escalonador escalonador = new Escalonador(filasPrioridades);
-    public static ArrayList<Processo> process;
+    public static List<Processo> processos;
 
     public static void addQueue(Processo processo) {
         if (filasPrioridades[processo.getPriority() - 1] != null)
@@ -40,9 +40,12 @@ public class App {
                     if(row != null){
                         data = row.split(";");
                         Processo currentProcess = new Processo(
-                        Integer.parseInt(data[0]), data[1], Integer.parseInt(data[2]),
-                        Integer.parseInt(data[3]));
-                        process.add(currentProcess);
+                            Integer.parseInt(data[0]),
+                            data[1],
+                            Integer.parseInt(data[2]),
+                            Integer.parseInt(data[3])
+                        );
+                        processos.add(currentProcess);
                         addQueue(currentProcess);
                     }
                 }
@@ -64,30 +67,16 @@ public class App {
 
     public static void changePriorities(Integer pid, Integer priority){
         if(priority >= 1 && priority <= 20){
-
-            Processo filteredProcesso = process.stream()
-            .filter(processos -> process.getID() == pid)
-            .findAny()
-            .orElse(null);
-            escalonador.changePriority(filteredProcesso, priority);
+            Processo filteredProcesso = processos.stream()
+                .filter(process -> process.getID() == pid)
+                .findAny()
+                .orElse(null);
+                
+            escalonador.changePriority(filteredProcesso, priority, true);
         }
         
 
     }
-
-    // public static void executaProcesso(Fila fila) {
-
-    //     while (fila.primeiro.proximo != null) {
-
-    //         int numAleatorio = aleatoriar(0, 250000);
-    //         try {
-    //             Thread.sleep(numAleatorio);
-    //             fila.retirar();
-    //         } catch (InterruptedException ex) {
-    //             System.out.println("Thread acordada!");
-    //         }
-    //     }
-    // }
 
     public static void executaThreads(Fila fila) {
         executaThread1(fila);
@@ -102,12 +91,6 @@ public class App {
         escalonador.executaProcesso(fila);
     }
 
-    public static int aleatoriar(int minimo, int maximo) {
-        Random random = new Random();
-        return random.nextInt((maximo - minimo) + 1) + minimo;
-        // metodo para gerar número aleatorio
-    }
-
     public static void main(String[] args) {
 
         Thread t1 = new Thread(); // Criação da primeira thread
@@ -116,7 +99,6 @@ public class App {
         t1.start();// Rodando a thread 1
         t2.start();// Rodando a thread 2
 
-        System.out.println(aleatoriar(0, 250000)); // pega um número aleatorio no intervalo de 0 a 250 segundos
         Scanner sc = new Scanner(System.in);
         int opcao = 0;
 
