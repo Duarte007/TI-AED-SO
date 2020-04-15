@@ -4,12 +4,14 @@ import java.util.Random;
 public class Escalonador{
     Fila[] processos;
     PoliticaPrioridade politica;
+    Boolean stop = false;
 
     public Escalonador(Fila[] processos){
         //@TODO pegar dados do arquivo usando o Scanner que o Jhonny criar
         //@TODO colocar os processos na fila de acordo com a prioridade
         this.processos = processos;
         this.politica = new PoliticaPrioridade();
+        this.stop = false;
     }
 
     //@TODO rotina para alterar a prioridade do processo caso necessario
@@ -30,14 +32,15 @@ public class Escalonador{
         fila.retirar();
     }
 
-    public void executaProcesso(Fila fila) {
+    public void executaProcesso(Fila fila, String thread) {
         Random random = new Random();
-
-        while (fila.primeiro.proximo != null) {
-            int timeProcess = random.nextInt((250000 - 0) + 1) + 0;
+        while (!this.stop && fila.primeiro.proximo != null) {
+            int timeProcess = random.nextInt((60000 - 0) + 1) + 0;
             int priorityToSub = 0;
             try {
-                priorityToSub = this.politica.getPriorityToSubtract(fila.primeiro);
+                priorityToSub = this.politica.getPriorityToSubtract(timeProcess);
+                System.out.println("Executando");
+                System.out.println(thread);
                 if(priorityToSub == -1){
                     this.killProcess(fila);
                 } else if(priorityToSub == 0){
@@ -53,5 +56,9 @@ public class Escalonador{
                 System.out.println("Thread acordada!");
             }
         }
+    }
+
+    public void toogleStop(){
+        this.stop = !this.stop;
     }
 }

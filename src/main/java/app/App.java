@@ -1,7 +1,7 @@
 package app;
 
+import java.util.ArrayList;
 import java.util.List;
-import java.util.Random;
 import java.util.Scanner;
 import java.io.FileReader;
 import java.io.IOException;
@@ -12,7 +12,8 @@ public class App {
 
     public static Fila[] filasPrioridades = new Fila[20];
     public static Escalonador escalonador = new Escalonador(filasPrioridades);
-    public static List<Processo> processos;
+    public static List<Processo> processos = new ArrayList<Processo>();
+    public static int i = 1;
 
     public static void addQueue(Processo processo) {
         if (filasPrioridades[processo.getPriority() - 1] != null)
@@ -34,7 +35,6 @@ public class App {
             String[] data;
             try {
                 row = readerFile.readLine();
-
                 while (row != null) {
                     row = readerFile.readLine();
                     if(row != null){
@@ -79,25 +79,48 @@ public class App {
     }
 
     public static void executaThreads(Fila fila) {
-        executaThread1(fila);
-        executaThread2(fila);
+        Thread t = new Thread(new executaThread1(fila));
+        t.start();
+        Thread t2 = new Thread(new executaThread2(fila));
+        t2.start();
     }
 
-    public static void executaThread1(Fila fila) {
-        escalonador.executaProcesso(fila);
+    
+
+    public static class executaThread1 implements Runnable {
+        Fila fila;
+        executaThread1(Fila fila){
+            this.fila = fila;
+        }
+
+        public void run() {
+            try{
+                System.out.println("Thread 1/"+i);
+                i++;
+                escalonador.executaProcesso(fila, "Thread 1");
+            } catch (Exception e){
+                System.out.println(e.getMessage());
+            }
+        }
     }
 
-    public static void executaThread2(Fila fila) {
-        escalonador.executaProcesso(fila);
+    public static class executaThread2 implements Runnable {
+        Fila fila;
+        executaThread2(Fila fila){
+            this.fila = fila;
+        }
+
+        public void run() {
+            try{
+                System.out.println("Thread 2");
+                escalonador.executaProcesso(fila, "Thread 2");
+            } catch (Exception e){
+                System.out.println(e.getMessage());
+            }
+        }
     }
 
     public static void main(String[] args) {
-
-        Thread t1 = new Thread(); // Criação da primeira thread
-        Thread t2 = new Thread(); // Criação da segunda thread
-
-        t1.start();// Rodando a thread 1
-        t2.start();// Rodando a thread 2
 
         Scanner sc = new Scanner(System.in);
         int opcao = 0;
@@ -105,7 +128,7 @@ public class App {
         while (opcao != 4) {
             System.out.println("========================================");
             System.out.println("1 - Modificar prioridade do processo.");
-            System.out.println("2 - Suspender ou retomar processo.");
+            System.out.println("2 - Suspender/Retomar processo.");
             System.out.println("3 - Iniciar novo ciclo.");
             System.out.println("4 - Sair\n");
             System.out.print("Escolha sua opção: ");
@@ -123,17 +146,10 @@ public class App {
                     break;
 
                 case 2:
-                    System.out.println("1 - Suspender processo.");
-                    System.out.println("2 - Retomar processo.\n");
-                    System.out.print("Escolha sua opção: ");
-                    String lerNumCase2 = sc.nextLine();
-                    int opcaoCase2 = Integer.parseInt(lerNumCase2);
-
-                    if (opcaoCase2 == 1) {
-                        
-                    }
-
+                    escalonador.toogleStop();
+                    break;
                 case 3:
+                    createProcess();
                     choiceQueueToExecute();
                     break;
 
