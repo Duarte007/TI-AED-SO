@@ -14,8 +14,8 @@ public class App {
     public static Escalonador escalonador = new Escalonador(filasPrioridades);
     public static List<Processo> processos = new ArrayList<Processo>();
     public static int i = 1;
-    static Thread t = new Thread();
-    static Thread t2 = new Thread();
+    static Thread t;
+    static Thread t2;
 
     public static void addQueue(Processo processo) {
         if (filasPrioridades[processo.getPriority() - 1] != null)
@@ -90,10 +90,11 @@ public class App {
     public static class executaThread1 implements Runnable {
         public void run() {
             try{
-                System.out.println("Thread 1/"+i);
-                i++;
-                for (Fila fila : filasPrioridades) {
-                    escalonador.executaProcesso(fila, "Thread 1");
+                //isInterrupted nao funcionaaaaa
+                while(t != null && !t.isInterrupted()){
+                    for (Fila fila : filasPrioridades) {
+                        escalonador.executaProcesso(fila, "Thread 1");
+                    }
                 }
             } catch (Exception e){
                 System.out.println(e.getMessage());
@@ -104,9 +105,11 @@ public class App {
     public static class executaThread2 implements Runnable {
         public void run() {
             try{
-                System.out.println("Thread 2");
-                for (Fila fila : filasPrioridades) {
-                    escalonador.executaProcesso(fila, "Thread 2");
+                while(t2 != null && !t2.isInterrupted()){
+                    System.out.println("Thread 2");
+                    for (Fila fila : filasPrioridades) {
+                        escalonador.executaProcesso(fila, "Thread 2");
+                    }
                 }
             } catch (Exception e){
                 System.out.println(e.getMessage());
@@ -118,6 +121,8 @@ public class App {
 
         Scanner sc = new Scanner(System.in);
         int opcao = 0;
+        t = new Thread(new executaThread1());
+        t2 = new Thread(new executaThread2());
 
         while (opcao != 4) {
             System.out.println("========================================");
@@ -148,6 +153,13 @@ public class App {
                     break;
 
                 case 4:
+                    escalonador.end();
+                    if(t != null){
+                        t.interrupt();
+                    }
+                    if(t2 != null){
+                        t2.interrupt();
+                    }
                     System.out.println("Finalizando...");
                     break;
 
