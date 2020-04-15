@@ -34,26 +34,28 @@ public class Escalonador{
 
     public void executaProcesso(Fila fila, String thread) {
         Random random = new Random();
-        while (!this.stop && fila.primeiro.proximo != null) {
-            int timeProcess = random.nextInt((60000 - 0) + 1) + 0;
-            int priorityToSub = 0;
-            try {
-                priorityToSub = this.politica.getPriorityToSubtract(timeProcess);
-                System.out.println("Executando");
-                System.out.println(thread);
-                if(priorityToSub == -1){
-                    this.killProcess(fila);
-                } else if(priorityToSub == 0){
-                    Thread.sleep(timeProcess);
-                    this.endProcess(fila);
-                } else {
-                    IDados dado = fila.retirar();
-                    if(dado != null){
-                        this.changePriority((Processo)dado, priorityToSub, false);
+        while (fila.primeiro.proximo != null) {
+            if(!this.stop){
+                int timeProcess = random.nextInt((60000 - 0) + 1) + 0;
+                int priorityToSub = 0;
+                try {
+                    priorityToSub = this.politica.getPriorityToSubtract(timeProcess);
+                    System.out.println("Executando");
+                    System.out.println(thread);
+                    if(priorityToSub == -1){
+                        this.killProcess(fila);
+                    } else if(priorityToSub == 0){
+                        Thread.sleep(timeProcess);
+                        this.endProcess(fila);
+                    } else {
+                        IDados dado = fila.retirar();
+                        if(dado != null){
+                            this.changePriority((Processo)dado, priorityToSub, false);
+                        }
                     }
+                } catch (InterruptedException ex) {
+                    System.out.println("Thread acordada!");
                 }
-            } catch (InterruptedException ex) {
-                System.out.println("Thread acordada!");
             }
         }
     }
