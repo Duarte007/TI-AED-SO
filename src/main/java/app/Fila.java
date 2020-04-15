@@ -1,5 +1,6 @@
 package app;
-class Fila{
+
+public class Fila{
 
     public Elemento primeiro, ultimo;
 

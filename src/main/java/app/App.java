@@ -3,6 +3,9 @@ package app;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Scanner;
+
+import app.util.executaThread;
+
 import java.io.FileReader;
 import java.io.IOException;
 import java.io.BufferedReader;
@@ -85,44 +88,12 @@ public class App {
         t2.start();
     }
 
-    
-
-    public static class executaThread1 implements Runnable {
-        public void run() {
-            try{
-                //isInterrupted nao funcionaaaaa
-                while(t != null && !t.isInterrupted()){
-                    for (Fila fila : filasPrioridades) {
-                        escalonador.executaProcesso(fila, "Thread 1");
-                    }
-                }
-            } catch (Exception e){
-                System.out.println(e.getMessage());
-            }
-        }
-    }
-
-    public static class executaThread2 implements Runnable {
-        public void run() {
-            try{
-                while(t2 != null && !t2.isInterrupted()){
-                    System.out.println("Thread 2");
-                    for (Fila fila : filasPrioridades) {
-                        escalonador.executaProcesso(fila, "Thread 2");
-                    }
-                }
-            } catch (Exception e){
-                System.out.println(e.getMessage());
-            }
-        }
-    }
-
     public static void main(String[] args) {
 
         Scanner sc = new Scanner(System.in);
         int opcao = 0;
-        t = new Thread(new executaThread1());
-        t2 = new Thread(new executaThread2());
+        t = new Thread(new executaThread(filasPrioridades, t, escalonador, "Thread 1"));
+        t2 = new Thread(new executaThread(filasPrioridades, t2, escalonador, "Thread 2"));
 
         while (opcao != 4) {
             System.out.println("========================================");
