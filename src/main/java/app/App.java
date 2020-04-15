@@ -64,12 +64,6 @@ public class App {
 
     }
 
-    // public static void choiceQueueToExecute(){
-    //     for (Fila fila : filasPrioridades) {
-    //         executaThreads(fila);
-    //     }
-    // }
-
     public static void changePriorities(Integer pid, Integer priority){
         if(priority >= 1 && priority <= 20){
             Processo filteredProcesso = processos.stream()
@@ -79,8 +73,6 @@ public class App {
                 
             escalonador.changePriority(filteredProcesso, priority, true);
         }
-        
-
     }
 
     public static void executaThreads() {
@@ -92,8 +84,8 @@ public class App {
 
         Scanner sc = new Scanner(System.in);
         int opcao = 0;
-        t = new Thread(new executaThread(filasPrioridades, t, escalonador, "Thread 1"));
-        t2 = new Thread(new executaThread(filasPrioridades, t2, escalonador, "Thread 2"));
+        t = new Thread(new executaThread(filasPrioridades, escalonador, "Thread 1"));
+        t2 = new Thread(new executaThread(filasPrioridades, escalonador, "Thread 2"));
 
         while (opcao != 4) {
             System.out.println("========================================");
