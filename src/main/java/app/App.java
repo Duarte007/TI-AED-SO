@@ -14,8 +14,8 @@ public class App {
     public static Escalonador escalonador = new Escalonador(filasPrioridades);
     public static List<Processo> processos = new ArrayList<Processo>();
     public static int i = 1;
-    static Thread t = new Thread(new executaThread1(filasPrioridades));
-    static Thread t2 = new Thread(new executaThread2(filasPrioridades));
+    static Thread t = new Thread();
+    static Thread t2 = new Thread();
 
     public static void addQueue(Processo processo) {
         if (filasPrioridades[processo.getPriority() - 1] != null)
@@ -88,16 +88,11 @@ public class App {
     
 
     public static class executaThread1 implements Runnable {
-        Fila[] filaP;
-        executaThread1(Fila[] fila){
-            this.filaP = fila;
-        }
-
         public void run() {
             try{
                 System.out.println("Thread 1/"+i);
                 i++;
-                for (Fila fila : filaP) {
+                for (Fila fila : filasPrioridades) {
                     escalonador.executaProcesso(fila, "Thread 1");
                 }
             } catch (Exception e){
@@ -107,15 +102,10 @@ public class App {
     }
 
     public static class executaThread2 implements Runnable {
-        Fila[] filaP;
-        executaThread2(Fila[] fila){
-            this.filaP = fila;
-        }
-
         public void run() {
             try{
                 System.out.println("Thread 2");
-                for (Fila fila : filaP) {
+                for (Fila fila : filasPrioridades) {
                     escalonador.executaProcesso(fila, "Thread 2");
                 }
             } catch (Exception e){
