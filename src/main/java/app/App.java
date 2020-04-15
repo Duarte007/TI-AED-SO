@@ -14,6 +14,8 @@ public class App {
     public static Escalonador escalonador = new Escalonador(filasPrioridades);
     public static List<Processo> processos = new ArrayList<Processo>();
     public static int i = 1;
+    static Thread t = new Thread(new executaThread1(filasPrioridades));
+    static Thread t2 = new Thread(new executaThread2(filasPrioridades));
 
     public static void addQueue(Processo processo) {
         if (filasPrioridades[processo.getPriority() - 1] != null)
@@ -59,11 +61,11 @@ public class App {
 
     }
 
-    public static void choiceQueueToExecute(){
-        for (Fila fila : filasPrioridades) {
-            executaThreads(fila);
-        }
-    }
+    // public static void choiceQueueToExecute(){
+    //     for (Fila fila : filasPrioridades) {
+    //         executaThreads(fila);
+    //     }
+    // }
 
     public static void changePriorities(Integer pid, Integer priority){
         if(priority >= 1 && priority <= 20){
@@ -78,26 +80,26 @@ public class App {
 
     }
 
-    public static void executaThreads(Fila fila) {
-        Thread t = new Thread(new executaThread1(fila));
+    public static void executaThreads() {
         t.start();
-        Thread t2 = new Thread(new executaThread2(fila));
         t2.start();
     }
 
     
 
     public static class executaThread1 implements Runnable {
-        Fila fila;
-        executaThread1(Fila fila){
-            this.fila = fila;
+        Fila[] filaP;
+        executaThread1(Fila[] fila){
+            this.filaP = fila;
         }
 
         public void run() {
             try{
                 System.out.println("Thread 1/"+i);
                 i++;
-                escalonador.executaProcesso(fila, "Thread 1");
+                for (Fila fila : filaP) {
+                    escalonador.executaProcesso(fila, "Thread 1");
+                }
             } catch (Exception e){
                 System.out.println(e.getMessage());
             }
@@ -105,15 +107,17 @@ public class App {
     }
 
     public static class executaThread2 implements Runnable {
-        Fila fila;
-        executaThread2(Fila fila){
-            this.fila = fila;
+        Fila[] filaP;
+        executaThread2(Fila[] fila){
+            this.filaP = fila;
         }
 
         public void run() {
             try{
                 System.out.println("Thread 2");
-                escalonador.executaProcesso(fila, "Thread 2");
+                for (Fila fila : filaP) {
+                    escalonador.executaProcesso(fila, "Thread 2");
+                }
             } catch (Exception e){
                 System.out.println(e.getMessage());
             }
@@ -150,7 +154,7 @@ public class App {
                     break;
                 case 3:
                     createProcess();
-                    choiceQueueToExecute();
+                    executaThreads();
                     break;
 
                 case 4:
