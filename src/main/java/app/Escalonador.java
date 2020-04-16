@@ -1,17 +1,22 @@
 package app;
-import java.util.Random;
 
-public class Escalonador{
+public class Escalonador extends PoliticaPrioridade{
     Fila[] processos;
-    PoliticaPrioridade politica;
     Boolean stop = false, end = false;
 
     public Escalonador(Fila[] processos){
         //@TODO pegar dados do arquivo usando o Scanner que o Jhonny criar
         //@TODO colocar os processos na fila de acordo com a prioridade
         this.processos = processos;
-        this.politica = new PoliticaPrioridade();
         this.stop = false;
+    }
+
+    public Boolean getEnd(){
+        return this.end;
+    }
+
+    public Boolean getStop(){
+        return this.stop;
     }
 
     //@TODO rotina para alterar a prioridade do processo caso necessario
@@ -36,33 +41,13 @@ public class Escalonador{
         System.out.println("Processo concluido: "+process.getID());
     }
 
-    public void executaProcesso(Fila fila, String thread) {
-        Random random = new Random();
-        System.out.println("Iniciando processamento... ("+thread+")");
-        while (fila.primeiro.proximo != null && !this.end) {
-            if(!this.stop){
-                int timeProcess = random.nextInt((60000 - 0) + 1) + 0;
-                int priorityToSub = 0;
-                try {
-                    priorityToSub = this.politica.getPriorityToSubtract(timeProcess);
-                    // System.out.println("Executando");
-                    // System.out.println(thread);
-                    if(priorityToSub == -1){
-                        this.killProcess(fila);
-                    } else if(priorityToSub == 0){
-                        Thread.sleep(timeProcess);
-                        this.endProcess(fila);
-                    } else {
-                        IDados dado = fila.retirar();
-                        if(dado != null){
-                            this.changePriority((Processo)dado, priorityToSub, false);
-                        }
-                    }
-                } catch (InterruptedException ex) {
-                    System.out.println("Thread acordada!");
-                }
+    public Fila choiceQueueToExecute(){
+        for (Fila fila : this.processos) {
+            if(fila.primeiro.proximo != null){
+                return fila;
             }
         }
+        return new Fila();
     }
 
     public void toogleStop(){

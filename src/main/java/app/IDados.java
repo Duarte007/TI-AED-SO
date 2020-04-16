@@ -1,5 +1,5 @@
 package app;
 
-interface IDados{
+public interface IDados{
     public int getID();
 }

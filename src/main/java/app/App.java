@@ -89,19 +89,19 @@ public class App {
     public static void main(String[] args) {
 
         Scanner sc = new Scanner(System.in);
-        int opcao = 0;
-        t = new Thread(new executaThread(filasPrioridades, escalonador, "Thread 1"));
+        String lerNum = "0";
+        t = new Thread(new executaThread(escalonador, "Thread 1"));
         // t2 = new Thread(new executaThread(filasPrioridades, escalonador, "Thread 2"));
         createProcess();
 
-        while (opcao != 4) {
+        while (Integer.parseInt(lerNum) != 4) {
             System.out.println("========================================");
             System.out.println("1 - Modificar prioridade do processo.");
             System.out.println("2 - Suspender/Retomar processo.");
             System.out.println("3 - Iniciar novo ciclo.");
             System.out.println("4 - Sair\n");
             System.out.print("Escolha sua opção: ");
-            String lerNum = sc.nextLine();
+            lerNum = sc.nextLine();
             if(lerNum.length() > 0)
                 switch (lerNum) {
                     case "1":
