@@ -41,7 +41,6 @@ public class App {
             try {
                 row = readerFile.readLine();
                 while (row != null) {
-                    row = readerFile.readLine();
                     if(row != null){
                         data = row.split(";");
                         Processo currentProcess = new Processo(
@@ -52,6 +51,7 @@ public class App {
                         );
                         processos.add(currentProcess);
                         addQueue(currentProcess);
+                        row = readerFile.readLine();
                     }
                 }
                 file.close();
@@ -66,18 +66,24 @@ public class App {
 
     public static void changePriorities(Integer pid, Integer priority){
         if(priority >= 1 && priority <= 20){
-            Processo filteredProcesso = processos.stream()
-                .filter(process -> process.getID() == pid)
-                .findAny()
-                .orElse(null);
-                
-            escalonador.changePriority(filteredProcesso, priority, true);
+            Processo filteredProcesso = null;
+            for (Processo processo : processos) {
+                if(processo.getID() == pid){
+                    filteredProcesso = processo;
+                    break;
+                }
+            }
+            if(filteredProcesso != null){
+                escalonador.changePriority(filteredProcesso, priority, true);
+                System.out.println("Prioridade alterada com sucesso!");
+            } else
+                System.out.println("Processo nao encontrado!");
         }
     }
 
     public static void executaThreads() {
         t.start();
-        t2.start();
+        // t2.start();
     }
 
     public static void main(String[] args) {
@@ -85,7 +91,8 @@ public class App {
         Scanner sc = new Scanner(System.in);
         int opcao = 0;
         t = new Thread(new executaThread(filasPrioridades, escalonador, "Thread 1"));
-        t2 = new Thread(new executaThread(filasPrioridades, escalonador, "Thread 2"));
+        // t2 = new Thread(new executaThread(filasPrioridades, escalonador, "Thread 2"));
+        createProcess();
 
         while (opcao != 4) {
             System.out.println("========================================");
@@ -95,42 +102,39 @@ public class App {
             System.out.println("4 - Sair\n");
             System.out.print("Escolha sua opção: ");
             String lerNum = sc.nextLine();
-            opcao = Integer.parseInt(lerNum);
+            if(lerNum.length() > 0)
+                switch (lerNum) {
+                    case "1":
+                        System.out.println("Informe o Id do processo (PID): ");
+                        Integer pid = sc.nextInt();
+                        System.out.println("Informe o novo número de prioridade (1 a 20): ");
+                        Integer priority = sc.nextInt();
+                        changePriorities(pid, priority);
+                        
+                        break;
 
-            switch (opcao) {
-                case 1:
-                    System.out.println("Informe o Id do processo (PID): ");
-                    Integer pid = sc.nextInt();
-                    System.out.println("Informe o novo número de prioridade (1 a 20): ");
-                    Integer priority = sc.nextInt();
-                    changePriorities(pid, priority);
-                    
-                    break;
+                    case "2":
+                        escalonador.toogleStop();
+                        break;
+                    case "3":
+                        executaThreads();
+                        break;
 
-                case 2:
-                    escalonador.toogleStop();
-                    break;
-                case 3:
-                    createProcess();
-                    executaThreads();
-                    break;
+                    case "4":
+                        escalonador.end();
+                        if(t != null){
+                            t.interrupt();
+                        }
+                        if(t2 != null){
+                            t2.interrupt();
+                        }
+                        System.out.println("Finalizando...");
+                        break;
 
-                case 4:
-                    escalonador.end();
-                    if(t != null){
-                        t.interrupt();
-                    }
-                    if(t2 != null){
-                        t2.interrupt();
-                    }
-                    System.out.println("Finalizando...");
-                    break;
-
-                default:
-                    System.out.println("Opção inválida.");
-                    break;
-
-            }
+                    default:
+                        System.out.println("Opção inválida.");
+                        break;
+                }
 
         }
 

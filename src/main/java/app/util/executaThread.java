@@ -3,7 +3,7 @@ package app.util;
 import app.Fila;
 import app.Escalonador;
 
-public class executaThread implements Runnable {
+public class executaThread extends Thread {
     Fila[] filas;
     Escalonador escalonador;
     String indentificador;
@@ -15,15 +15,9 @@ public class executaThread implements Runnable {
     }
 
     public void run() {
-        try{
-            while(!Thread.currentThread().isInterrupted()){
-                for (Fila fila : this.filas) {
-                    this.escalonador.executaProcesso(fila, this.indentificador);
-                }
-            }
-        } catch (Exception e){
-            Thread.currentThread().interrupt();
-            System.out.println(e.getMessage());
+        // while(!Thread.currentThread().isInterrupted()){
+        for (Fila fila : this.filas) {
+            this.escalonador.executaProcesso(fila, this.indentificador);
         }
     }
 }
